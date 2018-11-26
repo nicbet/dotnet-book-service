@@ -29,6 +29,7 @@ namespace BookApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Database Configuration
             string server = Configuration["MSSQL_SERVER"] ?? "localhost";
             string password = Configuration["MSSQL_PASSWORD"] ?? "password";
             string user = Configuration["MSSQL_USER"] ?? "sa";
@@ -39,7 +40,17 @@ namespace BookApi
             services.AddDbContext<BookContext>(options =>
                 options.UseSqlServer(connectionString)
             );
+
+            // Swagger API Pages
             services.AddSwagger();
+
+            // Redis Caching
+            services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = Configuration["REDIS_SERVER"] ?? "127.0.0.1";
+                    options.InstanceName = Configuration["REDIS_INSTANCE_NAME"] ?? "master";
+                }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
