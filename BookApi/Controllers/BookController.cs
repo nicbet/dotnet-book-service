@@ -47,7 +47,7 @@ namespace BookApi.Controllers {
         public ActionResult<Book> GetById(long id)
         {
             // Attempt to retrieve from cache first
-            var item = RetrieveFromCache(id) ?? _context.Books.Find(id);
+            var item = RetrieveFromCache(id);
             return item;
         }
 
@@ -58,13 +58,26 @@ namespace BookApi.Controllers {
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_cache_ttl)
             });
+            Console.Out.WriteLine("Saved " + book.Id + " to cache!");
         }
 
         private Book RetrieveFromCache(long id)
         {
             var key = id.ToString();
             var json = _cache.GetString(key);
-            return JsonConvert.DeserializeObject<Book>(json);
+            if (json == null)
+            {
+                Console.Out.WriteLine("Cache miss for " + id + ", fetching from database...");
+                var item =_context.Books.Find(id);
+                SaveToCache(item);
+                return item;
+            }
+            else
+            {
+                Console.Out.WriteLine("Cache hit for " + id);
+                return JsonConvert.DeserializeObject<Book>(json);
+
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace BookApi
         {
             // Database Configuration
             string server = Configuration["MSSQL_SERVER"] ?? "localhost";
-            string password = Configuration["MSSQL_PASSWORD"] ?? "password";
+            string password = Configuration["MSSQL_PASSWORD"] ?? "Passw0rd!";
             string user = Configuration["MSSQL_USER"] ?? "sa";
             string dbName = Configuration["MSSQL_DB_NAME"] ?? "books";
             string connectionString = $@"Server={server};Database={dbName};User Id={user};Password={password};";
